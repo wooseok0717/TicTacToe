@@ -1,5 +1,15 @@
 #app {
   display: flex;
+  flex-direction: column;
+}
+
+#table {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
 }
 
 .box {
