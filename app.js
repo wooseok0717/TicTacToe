@@ -41,8 +41,10 @@ var checkWins = function(arrays) {
       var winner = array[0];
       currentStatus.gameRunning = false;
       currentStatus.score[winner]++;
+      return true;
     }
-  })
+  });
+  return false;
 }
 
 // helper function to check if array has same value
@@ -63,6 +65,7 @@ var isValidLocation = function(location) {
 // mark placer
 var placeMark = function(location) {
   currentStatus.table[location] = currentStatus.player;
+  turnOver();
 }
 
 // turn over
@@ -89,6 +92,7 @@ header.innerHTML = 'TIC TAC TOE';
 // scoreboard
 var score = document.createElement('div');
 score.setAttribute('id', 'score');
+score.innerHTML = '<h3>SCORE</h3>'
 
 // players
 var player1 = document.createElement('div');
@@ -162,13 +166,34 @@ var renderInvalidMove = function() {
 /////////////////////////////// CONTROLLER ////////////////////////////////
 
 
-// initialize the table
+// initialize the table when page loads
 initialize();
-currentStatus.table[1] = 'X';
-console.log(currentStatus.table);
-renderTable(currentStatus.table);
 renderScore(currentStatus.score);
 renderTurn(currentStatus.player);
+
+
+// on click
+  // if locations is invalid
+    // isValidLocation(location)
+    // render invalid location
+      // renderInvalidMove
+  // else
+    // placeMarker
+      // placeMark(location)
+    // check if player has won
+      // checkWins(possibleWins)
+    // if player has won
+      // display winner
+      // renderScore
+        // renderScore(currentStatus.score);
+      // render rematch
+        // render Rematch
+    // else
+      // renderTable
+        // renderTable(currentStatus.table);
+      // renderTurn
+        // renderTurn(currentStatus.player);
+
 // renderTable(currentStatus.table);
 // render table
 
