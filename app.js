@@ -6,8 +6,8 @@ var currentStatus = {
   player: 'X',
   gameRunning: true,
   score: {
-    x: 0,
-    o: 0
+    X: 0,
+    O: 0
   }
 }
 
@@ -16,27 +16,29 @@ var initialize = function() {
   for (var x = 1; x < 10; x++) {
     currentStatus.table[x] = null;
   }
+  currentStatus.player = 'X';
+  currentStatus.gameRunning = true;
 };
 
 
-// Dials - just a alias for table
-var n = currentStatus.table;
-
-// possible wins
-var possibleWins = [
-  [n[1], n[2], n[3]],
-  [n[4], n[5], n[6]],
-  [n[7], n[8], n[9]],
-  [n[1], n[4], n[7]],
-  [n[2], n[5], n[8]],
-  [n[3], n[6], n[9]],
-  [n[1], n[5], n[9]],
-  [n[3], n[5], n[7]]
-];
 
 // check if player has won
-var checkWins = function(arrays) {
-  arrays.forEach(array => {
+var checkWins = function() {
+  // Dials - just a alias for table
+  var n = currentStatus.table;
+  // possible wins
+  var possibleWins = [
+    [n[1], n[2], n[3]],
+    [n[4], n[5], n[6]],
+    [n[7], n[8], n[9]],
+    [n[1], n[4], n[7]],
+    [n[2], n[5], n[8]],
+    [n[3], n[6], n[9]],
+    [n[1], n[5], n[9]],
+    [n[3], n[5], n[7]]
+  ];
+  // console.log(possibleWins);
+  possibleWins.forEach(array => {
     if (checkArrayhasAWin(array)) {
       var winner = array[0];
       currentStatus.gameRunning = false;
@@ -77,6 +79,56 @@ var turnOver = function() {
   }
 }
 
+// handle click
+var handleClick = function(event) {
+  if (event.target.innerText) {
+    renderInvalidMove();
+    return;
+  }
+  placeMark(event.target.id);
+  checkWins();
+  if (currentStatus.gameRunning) {
+    renderTable(currentStatus.table);
+    renderTurn(currentStatus.player);
+  } else {
+    renderTable(currentStatus.table);
+    turnOver();
+    renderScore(currentStatus.score)
+    renderTurn(currentStatus.table);
+    alert(currentStatus.player + 'Has Won the game!!')
+  }
+};
+
+// reset the board
+var resetBoard = function() {
+  initialize();
+  renderTable(currentStatus.table);
+  document.getElementById('turn').innerHTML = '';
+  renderTurn(currentStatus.player);
+  console.log('hello from reset', currentStatus);
+}
+
+// on click
+  // if locations is invalid
+    // isValidLocation(location)
+    // render invalid location
+      // renderInvalidMove
+  // else
+    // placeMarker
+      // placeMark(location)
+    // check if player has won
+      // checkWins(possibleWins)
+    // if player has won
+      // display winner
+      // renderScore
+        // renderScore(currentStatus.score);
+      // render rematch
+        // render Rematch
+    // else
+      // renderTable
+        // renderTable(currentStatus.table);
+      // renderTurn
+        // renderTurn(currentStatus.player);
 
 
 ///////////////////////////////// VIEW ////////////////////////////////////
@@ -119,13 +171,26 @@ app.append(turn);
 
 // render score
 var renderScore = function(scoreObj) {
-  player1.innerHTML = 'Player X: ' + scoreObj.x;
-  player2.innerHTML = 'Player O: ' + scoreObj.o;
+  player1.innerHTML = 'Player X: ' + scoreObj.X;
+  player2.innerHTML = 'Player O: ' + scoreObj.O;
 }
 
 // render players turn
 var renderTurn = function(player) {
-  turn.innerHTML = `It is Player ${player}'s turn!!`
+  if (!currentStatus.gameRunning) {
+    turn.innerHTML = currentStatus.player + ' Has Won the game!!'
+    renderRematch();
+  } else {
+    turn.innerHTML = `It is Player ${player}'s turn!!`
+  }
+}
+
+var renderRematch = function() {
+  var rematchBtn = document.createElement('button');
+  rematchBtn.setAttribute('id', 'reset');
+  rematchBtn.innerHTML = 'Rematch?'
+  rematchBtn.addEventListener('click', resetBoard);
+  document.getElementById('turn').append(rematchBtn)
 }
 
 // initiate table
@@ -138,6 +203,7 @@ for (var x = 1; x < 4; x++) {
     var box = document.createElement('div');
     box.setAttribute('id', currentNumber);
     box.className = 'box';
+    box.addEventListener('click', handleClick)
     row.append(box);
     currentNumber++;
   }
@@ -147,9 +213,12 @@ for (var x = 1; x < 4; x++) {
 // render table
 var renderTable = function(table) {
   for (var x = 1; x < 10; x++) {
+    var current = document.getElementById(x);
     if (table[x]) {
-      var current = document.getElementById(1);
-      current.innerHTML = 'x';
+      current.innerHTML = currentStatus.table[x];
+      // console.log('hello', current);
+    } else {
+      current.innerHTML = null;
     }
   }
 }
@@ -170,6 +239,8 @@ var renderInvalidMove = function() {
 initialize();
 renderScore(currentStatus.score);
 renderTurn(currentStatus.player);
+// currentStatus.table[1] = 'X';
+renderTable(currentStatus.table);
 
 
 // on click
